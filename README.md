@@ -1,4 +1,4 @@
-# Small_World_Task
+# Clean Architecture
 
 ## Quick summary
 
