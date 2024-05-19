@@ -53,7 +53,7 @@ extension MovieDetailViewModal {
     func fetchMovieDetail(){
         if Reachable.instance.isReachable() {
             let apiKey = APIConstant.instance.getAPIKey()
-            let param = MovieDetailParam(apiKey:apiKey)
+            let param = MovieDetailRequest(apiKey:apiKey)
             guard let movieId = movieId else{ return }
             
             useCase.execute(with: movieId , param: param) { [weak self]

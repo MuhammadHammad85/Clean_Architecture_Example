@@ -11,11 +11,11 @@ typealias CBRepoMovieList = (_ response: MovieListResponse?, _ error: NSError?) 
 typealias CBRepoMovieDetail = (_ response: MovieDetailResponse?, _ error: NSError?) -> Void
 
 protocol MoviesListRepoProtocol {
-    func getMovies( param: MovieListParam, completion: @escaping CBRepoMovieList)
+    func getMovies( param: MovieListRequest, completion: @escaping CBRepoMovieList)
 }
 
 protocol MovieDetailRepoProtocol {
-    func getMovieDetail(with id: Int, param: MovieDetailParam, completion: @escaping CBRepoMovieDetail)
+    func getMovieDetail(with id: Int, param: MovieDetailRequest, completion: @escaping CBRepoMovieDetail)
 }
 
 class MoviesRepository: MoviesListRepoProtocol,  MovieDetailRepoProtocol {
@@ -23,7 +23,7 @@ class MoviesRepository: MoviesListRepoProtocol,  MovieDetailRepoProtocol {
     
     
     //MARK: - Fetch Movies List
-    func getMovies(param: MovieListParam, completion: @escaping CBRepoMovieList) {
+    func getMovies(param: MovieListRequest, completion: @escaping CBRepoMovieList) {
         NetworkManager.instance.requestService(
             urlPath: AppURL.reguesURL(path: Path.discoverMovies),
             method: .get,
@@ -41,7 +41,7 @@ class MoviesRepository: MoviesListRepoProtocol,  MovieDetailRepoProtocol {
     }
     
     //MARK: - Fetch Movie Detail
-    func getMovieDetail(with id: Int,param: MovieDetailParam, completion: @escaping CBRepoMovieDetail) {
+    func getMovieDetail(with id: Int,param: MovieDetailRequest, completion: @escaping CBRepoMovieDetail) {
         NetworkManager.instance.requestService(
             urlPath: AppURL.reguesURL(path: Path.getDetails(id)),
             method: .get,

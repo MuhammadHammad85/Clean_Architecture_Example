@@ -87,7 +87,7 @@ extension MoviesListViewModal {
     func fetchMovies(){
         if Reachable.instance.isReachable() {
             let apiKey = APIConstant.instance.getAPIKey()
-            let param = MovieListParam(apiKey:apiKey, page: self.currentPage)
+            let param = MovieListRequest(apiKey:apiKey, page: self.currentPage)
             useCase.execute(param: param) { [weak self]
                 totalPages , movies, errorMsg in
                 guard let self = self else { return }

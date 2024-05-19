@@ -11,7 +11,7 @@ typealias CBUserCaseMovieDetail = (_ movie: MovieDetailResponse?, _ errorMsg: St
 
 protocol MovieDetailUseCaseProtocol {
     
-    func execute(with id:Int, param: MovieDetailParam , completion: @escaping CBUserCaseMovieDetail)
+    func execute(with id:Int, param: MovieDetailRequest, completion: @escaping CBUserCaseMovieDetail)
     
 }
 
@@ -20,7 +20,7 @@ class MovieDetailUserCase: MovieDetailUseCaseProtocol {
     private let movieListRepo: MovieDetailRepoProtocol = MoviesRepository()
     
     
-    func execute(with id:Int, param: MovieDetailParam , completion: @escaping CBUserCaseMovieDetail) {
+    func execute(with id:Int, param: MovieDetailRequest, completion: @escaping CBUserCaseMovieDetail) {
         movieListRepo.getMovieDetail(with: id, param: param) {
             movie, error in
             if let movie = movie {
