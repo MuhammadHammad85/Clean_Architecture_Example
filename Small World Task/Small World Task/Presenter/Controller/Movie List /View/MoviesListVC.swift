@@ -12,7 +12,7 @@ class MoviesListVC: BaseVC {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
-    private var viewModal = MoviesListViewModal()
+    var viewModal: MoviesListViewModal?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,24 +20,18 @@ class MoviesListVC: BaseVC {
     }
     
     private func setupViews(){
-        viewModal.delegate = self
         setNavTitle()
         setupSearchBar()
         registerCell()
-        fetchMovies()
-    }
-    
-    private func fetchMovies(){
-        viewModal.fetchMovies()
     }
     
     private func setNavTitle(){
         self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.title = viewModal.navTitle
+        self.title = viewModal?.navTitle
     }
     
     private func setupSearchBar(){
-        searchBar.placeholder = viewModal.searchBarPlaceHolder
+        searchBar.placeholder = viewModal?.searchBarPlaceHolder
         searchBar.delegate = self
         searchBar.showsCancelButton = true
     }
@@ -58,31 +52,32 @@ extension MoviesListVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModal.getMovieCount()
+        return (viewModal?.getMovieCount() ?? 0)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieListTableViewCell.getIdentifier(), for: indexPath) as? MovieListTableViewCell else {  return UITableViewCell()  }
-        let data = viewModal.getMovie(at: indexPath.row)
+        let data = viewModal?.getMovie(at: indexPath.row)
         cell.configureCell(data)
         cell.selectionStyle = .none
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let id = viewModal.getMovie(at: indexPath.row).id ?? 0
+        guard let id = viewModal?.getMovie(at: indexPath.row).id else { return }
         navigateToDetail(with: id)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        viewModal.applyPagination(at: indexPath.row)
+        viewModal?.applyPagination(at: indexPath.row)
     }
 }
 
 //MARK: - UISearchBar Delegate
 extension MoviesListVC: UISearchBarDelegate {
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        viewModal.applySearch(with: searchText)
+        viewModal?.applySearch(with: searchText)
     }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -91,7 +86,7 @@ extension MoviesListVC: UISearchBarDelegate {
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
-        viewModal.clearSearch()
+        viewModal?.clearSearch()
     }
     
 }
@@ -101,7 +96,10 @@ extension MoviesListVC {
     
     private func navigateToDetail(with movieId: Int){
         let dVC = StoryBoards.main.instantiateViewController(withIdentifier: MovieDetailVC.getIdentifier())as! MovieDetailVC
-        let viewModal = MovieDetailViewModal(movieId: movieId)
+        let request: NetworkManagerProtocol = NetworkManager()
+        let repo: MovieDetailRepoProtocol = MoviesRepository(request: request)
+        let useCase: MovieDetailUseCase = MovieDetailUseCase(_repo: repo)
+        let viewModal = MovieDetailViewModal(movieId: movieId, _delegate: dVC, _useCase: useCase)
         dVC.viewModel = viewModal
         self.navigationController?.pushViewController(dVC, animated: true)
     }

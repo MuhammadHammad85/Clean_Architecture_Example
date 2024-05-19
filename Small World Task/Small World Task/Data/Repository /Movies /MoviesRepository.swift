@@ -7,8 +7,8 @@
 
 import Foundation
 
-typealias CBRepoMovieList = (_ response: MovieListResponse?, _ error: NSError?) -> Void
-typealias CBRepoMovieDetail = (_ response: MovieDetailResponse?, _ error: NSError?) -> Void
+typealias CBRepoMovieList = (_ response: MovieListResponse?, _ message: String?) -> Void
+typealias CBRepoMovieDetail = (_ response: MovieDetailResponse?, _ message: String?) -> Void
 
 protocol MoviesListRepoProtocol {
     func getMovies( param: MovieListRequest, completion: @escaping CBRepoMovieList)
@@ -18,23 +18,27 @@ protocol MovieDetailRepoProtocol {
     func getMovieDetail(with id: Int, param: MovieDetailRequest, completion: @escaping CBRepoMovieDetail)
 }
 
-class MoviesRepository: MoviesListRepoProtocol,  MovieDetailRepoProtocol {
+class MoviesRepository: MoviesListRepoProtocol, MovieDetailRepoProtocol {
     
+    let networkManager: NetworkManagerProtocol
     
+    init(request: NetworkManagerProtocol ){
+        networkManager = request
+    }
     
     //MARK: - Fetch Movies List
     func getMovies(param: MovieListRequest, completion: @escaping CBRepoMovieList) {
-        NetworkManager.instance.requestService(
+        networkManager.requestService(
             urlPath: AppURL.reguesURL(path: Path.discoverMovies),
             method: .get,
             parameters: param,
             expectedResponse: MovieListResponse.self
             ,completion: {
                 (response, error) in
-                if response != nil {
+                if let response = response {
                     completion(response, nil)
-                } else {
-                    completion(nil, error)
+                }else {
+                    completion(nil, error?.domain)
                 }
             }
         )
@@ -42,20 +46,20 @@ class MoviesRepository: MoviesListRepoProtocol,  MovieDetailRepoProtocol {
     
     //MARK: - Fetch Movie Detail
     func getMovieDetail(with id: Int,param: MovieDetailRequest, completion: @escaping CBRepoMovieDetail) {
-        NetworkManager.instance.requestService(
+        networkManager.requestService(
             urlPath: AppURL.reguesURL(path: Path.getDetails(id)),
             method: .get,
             parameters: param,
             expectedResponse: MovieDetailResponse.self
             ,completion: {
                 (response, error) in
-                if response != nil {
+                if let response = response {
                     completion(response, nil)
-                } else {
-                    completion(nil, error)
+                }else {
+                    completion(nil, error?.domain)
                 }
             }
         )
     }
-
+    
 }

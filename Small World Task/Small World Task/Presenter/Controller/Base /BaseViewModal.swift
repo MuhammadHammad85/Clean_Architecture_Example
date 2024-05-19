@@ -7,12 +7,7 @@
 
 import Foundation
 
-protocol BaseViewModalProtocol {
+protocol BaseViewModalProtocol: AnyObject {
    func show(_ message: String)
 }
 
-class BaseViewModal {
-    
-
-    
-}

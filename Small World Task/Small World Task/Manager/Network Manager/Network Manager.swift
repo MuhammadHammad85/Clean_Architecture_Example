@@ -10,14 +10,20 @@ import Alamofire
 
 typealias CBService<T: Decodable> = (_ response: T?, _ error: NSError?) -> Void
 
-class NetworkManager {
+protocol NetworkManagerProtocol {
+    func requestService<T: Decodable, parameters: Encodable>( urlPath: String, method: HTTPMethod, parameters: parameters?, expectedResponse: T.Type , completion: @escaping CBService<T>)
+}
+
+class NetworkManager: NetworkManagerProtocol {
     
-    static let instance: NetworkManager = {
-        let instance = NetworkManager()
-        return instance
-    }()
     
-    func requestService<T: Decodable, parameters: Encodable>( urlPath: String, method: HTTPMethod, parameters: parameters?, expectedResponse: T.Type = T.self, completion: @escaping CBService<T>) {
+    func requestService<T: Decodable, parameters: Encodable>( urlPath: String, method: HTTPMethod, parameters: parameters?, expectedResponse: T.Type, completion: @escaping CBService<T>) {
+        
+        guard Reachable().isReachable() else{
+            /// NSURLErrorNotConnectedToInternet = -1009
+            completion(nil, NSError(domain: StaticStrings.noInternetConnection, code: NSURLErrorNotConnectedToInternet))
+            return
+        }
         
         var encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default
         if method == .post {
@@ -27,8 +33,8 @@ class NetworkManager {
         AF.request(urlPath, method: method, parameters: parameters, encoder: encoder, headers: nil).responseDecodable(of: expectedResponse.self) { response in
            
             guard let code = response.response?.statusCode else {
-                let error = NSError(domain: StaticStrings.Error, code: 10001)
-                return completion(nil, error)
+                let nsError = NSError(domain: StaticStrings.noInternetConnection, code: response.error?.responseCode ?? NSURLErrorUnknown)
+                return completion(nil, nsError)
             }
             
             switch code {
@@ -36,10 +42,10 @@ class NetworkManager {
                 completion(response.value, nil)
             default:
                 if let obj = response.value as? BaseResponse{
-                    let error = NSError(domain: obj.message ?? StaticStrings.Error, code: 10002)
+                    let error = NSError(domain: obj.message ?? StaticStrings.unableDecodeMessage, code: code)
                     completion(nil, error)
                 }else{
-                    let error = NSError(domain:StaticStrings.connectivityIssue, code: 10003)
+                    let error = NSError(domain:StaticStrings.unableDecodeMessage, code: code)
                     completion(nil, error)
                 }
             }

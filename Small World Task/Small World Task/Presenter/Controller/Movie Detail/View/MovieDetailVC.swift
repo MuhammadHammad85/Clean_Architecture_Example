@@ -25,7 +25,6 @@ class MovieDetailVC: BaseVC {
         viewModel?.delegate = self
         setNavBar()
         setupUIViews()
-        fetchDetail()
     }
     
     private func setNavBar(){
@@ -38,9 +37,6 @@ class MovieDetailVC: BaseVC {
         imageViewMoview.layer.cornerRadius = 10
     }
     
-    private func fetchDetail(){
-        viewModel?.fetchMovieDetail()
-    }
 
     private func loadData(){
         labelName.text = viewModel?.getMovieName()

@@ -18,6 +18,7 @@ enum StaticStrings {
     static let SomethingWentWrong   = "Something went wrong"
     static let noInternetConnection = "Please check your internet connectivity."
     static let timeOut              = "Timeout"
-    static let connectivityIssue = "It appears we’re having some connectivity issues.\n" + "Please try again shortly."
+    static let connectivityIssue    = "It appears we’re having some connectivity issues.\n" + "Please try again shortly."
+    static let unableDecodeMessage  = "Unable to decode user message"
 }
 
