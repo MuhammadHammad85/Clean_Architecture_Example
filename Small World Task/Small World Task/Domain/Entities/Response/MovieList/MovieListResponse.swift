@@ -17,9 +17,12 @@ class MovieListResponse: BaseResponse, Codable {
     var page: Int?
 
     enum CodingKeys: String, CodingKey{
+        case code = "code"
+        case message = "message"
+        case succes = "succes"
         case result = "results"
-        case page = "page"
         case totalPages = "total_pages"
+        case page = "page"
     }
 
 }

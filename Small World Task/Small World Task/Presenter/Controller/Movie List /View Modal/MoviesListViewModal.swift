@@ -12,42 +12,36 @@ protocol MoviesListViewModalDelegate: BaseViewModalProtocol{
     func searchState(active: Bool)
 }
 
-class MoviesListViewModal: BaseViewModal {
+class MoviesListViewModal  {
     
     let navTitle: String = "Movies List"
     let searchBarPlaceHolder = "Search movies"
-    var delegate: MoviesListViewModalDelegate?
-    private let useCase: MovieListUseCaseProtocol = MovieListUserCase()
+    weak var delegate: MoviesListViewModalDelegate?
+    private let useCase: MovieListUseCaseProtocol
     private var moviesList:  [MovieLists] = []
     private var searchedMovies: [MovieLists] = []
-    private var totatPages: Int = 0
+    private var totalPages: Int = 0
     var isActiveSearch = false
     var currentPage: Int = 1
     
+    init(_delegate: MoviesListViewModalDelegate, _useCase: MovieListUseCaseProtocol ) {
+        delegate = _delegate
+        useCase = _useCase
+        fetchMovies(for: currentPage)
+    }
+    
     func getMovie(at index: Int)-> MovieLists{
-        if isActiveSearch {
-            return searchedMovies[index]
-        }else{
-            return moviesList[index]
-        }
+        return isActiveSearch ? searchedMovies[index] : moviesList[index]
     }
     
     func getMovieCount()-> Int{
-        if isActiveSearch {
-            return searchedMovies.count
-        }else{
-            return moviesList.count
-        }
+        return isActiveSearch ? searchedMovies.count : moviesList.count
     }
     
     func applyPagination(at index: Int){
-        if !isActiveSearch {
-            if index == (getMovieCount() - 1){
-                if currentPage != totatPages {
-                    currentPage += 1
-                    fetchMovies()
-                }
-            }
+        if !isActiveSearch && index == (getMovieCount() - 1) && currentPage != totalPages{
+            currentPage += 1
+            fetchMovies(for: currentPage)
         }
     }
     
@@ -71,41 +65,30 @@ class MoviesListViewModal: BaseViewModal {
         searchedMovies.removeAll()
         delegate?.searchState(active: false)
     }
-    
-    func loadStoredData(){
-        let data = ClientStorage.instance.getMoviesListResponse()
-        self.totatPages = data?.totalPages ?? 0
-        self.currentPage = data?.page ?? 1
-        moviesList = data?.result ?? []
-    }
 }
 
 //MARK: - API Calling
 extension MoviesListViewModal {
     
     ///Fetch Movies
-    func fetchMovies(){
-        if Reachable.instance.isReachable() {
-            let apiKey = APIConstant.instance.getAPIKey()
-            let param = MovieListParam(apiKey:apiKey, page: self.currentPage)
-            useCase.execute(param: param) { [weak self]
-                totalPages , movies, errorMsg in
-                guard let self = self else { return }
-                if let movies = movies , let totalPages = totalPages {
-                    defer { self.delegate?.onSucces() }
-                    self.totatPages = totalPages
-                    for movie in movies {
-                        self.moviesList.append(movie)
-                    }
-                }else{
-                    self.delegate?.show(errorMsg ?? StaticStrings.SomethingWentWrong)
-                }
-            }
-        }else{
-            loadStoredData()
-            self.delegate?.show(StaticStrings.noInternetConnection)
-        }
+    private func fetchMovies( for page: Int){
+        let apiKey = APIConstant.instance.getAPIKey()
+        let param = MovieListRequest(apiKey:apiKey, page: page)
         
+        useCase.execute(param: param) { [ weak self ]
+            movies, _totalPages, message in
+            guard let self = self else{ return }
+            if let movies = movies, let _totalPages = _totalPages {
+                
+                defer { delegate?.onSucces() }
+               
+                moviesList += movies
+                totalPages = _totalPages
+            
+            }else{
+                delegate?.show(message ?? StaticStrings.SomethingWentWrong)
+            }
+        }
     }
     
 }

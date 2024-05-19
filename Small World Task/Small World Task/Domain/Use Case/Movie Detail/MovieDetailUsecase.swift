@@ -7,26 +7,30 @@
 
 import Foundation
 
-typealias CBUserCaseMovieDetail = (_ movie: MovieDetailResponse?, _ errorMsg: String?) -> Void
+typealias CBUserCaseMovieDetail = (_ movieDetail: MovieDetailResponse?, _ errorMsg: String?) -> Void
 
 protocol MovieDetailUseCaseProtocol {
     
-    func execute(with id:Int, param: MovieDetailParam , completion: @escaping CBUserCaseMovieDetail)
+    func execute(with id:Int, param: MovieDetailRequest, completion: @escaping CBUserCaseMovieDetail)
     
 }
 
-class MovieDetailUserCase: MovieDetailUseCaseProtocol {
+class MovieDetailUseCase: MovieDetailUseCaseProtocol {
     
-    private let movieListRepo: MovieDetailRepoProtocol = MoviesRepository()
+    let repo: MovieDetailRepoProtocol
     
+    init(_repo: MovieDetailRepoProtocol ){
+        repo = _repo
+    }
     
-    func execute(with id:Int, param: MovieDetailParam , completion: @escaping CBUserCaseMovieDetail) {
-        movieListRepo.getMovieDetail(with: id, param: param) {
-            movie, error in
-            if let movie = movie {
-                completion(movie, nil)
+    func execute(with id:Int, param: MovieDetailRequest, completion: @escaping CBUserCaseMovieDetail) {
+        
+        repo.getMovieDetail(with: id, param: param) {
+            movieDetail, message in
+            if let movieDetail = movieDetail {
+                completion(movieDetail, nil)
             }else{
-                completion( nil, error?.domain)
+                completion(nil, message)
             }
         }
     }

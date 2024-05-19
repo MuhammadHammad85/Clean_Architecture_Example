@@ -14,8 +14,9 @@ class MovieListTableViewCell: UITableViewCell, IdentifiableProtocol {
     @IBOutlet weak var labelReleaseDate: UILabel!
     
     
-    func configureCell(_ movie: MovieLists){
+    func configureCell(_ movie: MovieLists?){
         setupViews()
+        guard let movie = movie else{ return }
         setMovieInfo(movie)
     }
     

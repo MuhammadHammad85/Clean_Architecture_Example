@@ -11,16 +11,17 @@ protocol MovieDetailViewModalDelegate: BaseViewModalProtocol {
     func onSuccessMovieDetail()
 }
 
-class MovieDetailViewModal: BaseViewModal {
+class MovieDetailViewModal  {
     
-    var movieId: Int?
     let title = "Movie Detail"
-    private let useCase: MovieDetailUseCaseProtocol = MovieDetailUserCase()
     private var movieInfo: MovieDetailResponse?
-    var delegate: MovieDetailViewModalDelegate?
+    weak var delegate: MovieDetailViewModalDelegate?
+    private let useCase: MovieDetailUseCaseProtocol
     
-    init(movieId id: Int) {
-        self.movieId = id
+    init(movieId id: Int, _delegate: MovieDetailViewModalDelegate, _useCase: MovieDetailUseCaseProtocol ) {
+        delegate = _delegate
+        useCase = _useCase
+        fetchMovieDetail(movieId: id)
     }
     
     func getMovieName()-> String{
@@ -34,45 +35,30 @@ class MovieDetailViewModal: BaseViewModal {
     func getMoviePoster()-> String {
         return movieInfo?.posterImage ?? ""
     }
-    
-    private func getStoredMovieInfo(){
-        let data = ClientStorage.instance.getMoviesListResponse()?.result ?? []
-        guard let movie = data.first(where: { $0.id == movieId }) else {return}
-        movieInfo = MovieDetailResponse(
-            id: movie.id,
-            title: movie.title,
-            description: movie.description,
-            releaseDate: movie.releaseDate,
-            posterImage: movie.posterPath)
-    }
+
 }
 //MARK: - API Calling
 extension MovieDetailViewModal {
     
     ///Fetch Movie Detail
-    func fetchMovieDetail(){
-        if Reachable.instance.isReachable() {
-            let apiKey = APIConstant.instance.getAPIKey()
-            let param = MovieDetailParam(apiKey:apiKey)
-            guard let movieId = movieId else{ return }
+    private func fetchMovieDetail(movieId: Int){
+        let apiKey = APIConstant.instance.getAPIKey()
+        let param = MovieDetailRequest(apiKey:apiKey)
+        useCase.execute(with: movieId , param: param) { [weak self]
+            _movieInfo, message in
+          
+            guard let self = self else { return }
             
-            useCase.execute(with: movieId , param: param) { [weak self]
-                movie, errorMsg in
-                guard let self = self else { return }
-                if let movie = movie {
-                    defer { self.delegate?.onSuccessMovieDetail() }
-                    
-                    self.movieInfo = movie
-                }else{
-                    self.delegate?.show(errorMsg ?? StaticStrings.SomethingWentWrong)
-                }
+            if let _movieInfo = _movieInfo {
+                
+                defer { delegate?.onSuccessMovieDetail() }
+                movieInfo = _movieInfo
+                
+            }else{
+                delegate?.show(message ?? StaticStrings.SomethingWentWrong)
             }
-        }else{
-            getStoredMovieInfo()
-            delegate?.onSuccessMovieDetail()
-            delegate?.show(StaticStrings.noInternetConnection)
+            
         }
-        
     }
     
 }

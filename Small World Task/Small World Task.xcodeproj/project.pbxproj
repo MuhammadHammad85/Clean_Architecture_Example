@@ -37,6 +37,7 @@
 		BF539A842AF70693005D30A1 /* MovieDetailResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF539A832AF70693005D30A1 /* MovieDetailResponse.swift */; };
 		BF539A872AF715D3005D30A1 /* Common Function.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF539A862AF715D3005D30A1 /* Common Function.swift */; };
 		BF933F622AF7C8BE0016FA92 /* ClientStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF933F612AF7C8BE0016FA92 /* ClientStorage.swift */; };
+		BFAB4B062BF991690062B6A7 /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAB4B052BF991690062B6A7 /* UserDefaultManager.swift */; };
 		BFB50DDC2AF68172007AB8D5 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB50DDB2AF68172007AB8D5 /* Reachability.swift */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 		BF539A832AF70693005D30A1 /* MovieDetailResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailResponse.swift; sourceTree = "<group>"; };
 		BF539A862AF715D3005D30A1 /* Common Function.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Common Function.swift"; sourceTree = "<group>"; };
 		BF933F612AF7C8BE0016FA92 /* ClientStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientStorage.swift; sourceTree = "<group>"; };
+		BFAB4B052BF991690062B6A7 /* UserDefaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		BFB50DDB2AF68172007AB8D5 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		F763596DD3256982A4F3732F /* Pods_Small_World_Task.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Small_World_Task.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -128,6 +130,8 @@
 		BF17FFEB2AF2E2C50080716F /* Small World Task */ = {
 			isa = PBXGroup;
 			children = (
+				BF49A2EA2AF3FAAE00F3B718 /* AppURL */,
+				BF933F602AF7C86F0016FA92 /* Client Storage */,
 				BF933F5F2AF7C85F0016FA92 /* Manager */,
 				BF49A3202AF44B5800F3B718 /* App Delegate */,
 				BF49A3082AF43B2E00F3B718 /* Utilities */,
@@ -160,6 +164,7 @@
 		BF49A2DE2AF3F9D900F3B718 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
+				BFAB4B032BF981250062B6A7 /* Entities */,
 				BF49A2E32AF3FA4600F3B718 /* Use Case */,
 			);
 			path = Domain;
@@ -177,7 +182,8 @@
 		BF49A2E02AF3F9F300F3B718 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				BF49A2E42AF3FA5800F3B718 /* Networking */,
+				BF49A3272AF4522100F3B718 /* API Constant */,
+				BF49A2E92AF3FA9C00F3B718 /* Repository  */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -211,35 +217,21 @@
 			path = "Use Case";
 			sourceTree = "<group>";
 		};
-		BF49A2E42AF3FA5800F3B718 /* Networking */ = {
-			isa = PBXGroup;
-			children = (
-				BFB50DDA2AF68159007AB8D5 /* API Utility */,
-				BF49A3272AF4522100F3B718 /* API Constant */,
-				BF49A2EA2AF3FAAE00F3B718 /* AppURL */,
-				BF49A2E92AF3FA9C00F3B718 /* Repository  */,
-				BF49A2E62AF3FA7400F3B718 /* Param */,
-				BF49A2E72AF3FA7B00F3B718 /* Response */,
-				BF49A2E52AF3FA6B00F3B718 /* Manager */,
-			);
-			path = Networking;
-			sourceTree = "<group>";
-		};
-		BF49A2E52AF3FA6B00F3B718 /* Manager */ = {
+		BF49A2E52AF3FA6B00F3B718 /* Network Manager */ = {
 			isa = PBXGroup;
 			children = (
 				BF49A3002AF3FE3400F3B718 /* Network Manager.swift */,
 			);
-			path = Manager;
+			path = "Network Manager";
 			sourceTree = "<group>";
 		};
-		BF49A2E62AF3FA7400F3B718 /* Param */ = {
+		BF49A2E62AF3FA7400F3B718 /* Request */ = {
 			isa = PBXGroup;
 			children = (
 				BF49A2FF2AF3FE0700F3B718 /* MovieDetail */,
 				BF49A2FE2AF3FDF700F3B718 /* MovieList */,
 			);
-			path = Param;
+			path = Request;
 			sourceTree = "<group>";
 		};
 		BF49A2E72AF3FA7B00F3B718 /* Response */ = {
@@ -353,6 +345,7 @@
 		BF49A3082AF43B2E00F3B718 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				BFB50DDD2AF68500007AB8D5 /* Reachability */,
 				BF539A852AF715C2005D30A1 /* Comon Function */,
 				BF49A30D2AF43D0900F3B718 /* Helper Protocol */,
 				BF49A30A2AF43B5400F3B718 /* Extension */,
@@ -454,7 +447,8 @@
 		BF933F5F2AF7C85F0016FA92 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
-				BF933F602AF7C86F0016FA92 /* Client Storage */,
+				BFAB4B042BF991540062B6A7 /* User Default Manager */,
+				BF49A2E52AF3FA6B00F3B718 /* Network Manager */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -467,12 +461,21 @@
 			path = "Client Storage";
 			sourceTree = "<group>";
 		};
-		BFB50DDA2AF68159007AB8D5 /* API Utility */ = {
+		BFAB4B032BF981250062B6A7 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
-				BFB50DDD2AF68500007AB8D5 /* Reachability */,
+				BF49A2E62AF3FA7400F3B718 /* Request */,
+				BF49A2E72AF3FA7B00F3B718 /* Response */,
 			);
-			path = "API Utility";
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		BFAB4B042BF991540062B6A7 /* User Default Manager */ = {
+			isa = PBXGroup;
+			children = (
+				BFAB4B052BF991690062B6A7 /* UserDefaultManager.swift */,
+			);
+			path = "User Default Manager";
 			sourceTree = "<group>";
 		};
 		BFB50DDD2AF68500007AB8D5 /* Reachability */ = {
@@ -623,6 +626,7 @@
 				BF49A30C2AF43B6800F3B718 /* Constant.swift in Sources */,
 				BF17FFED2AF2E2C50080716F /* AppDelegate.swift in Sources */,
 				BF49A2F42AF3FB9E00F3B718 /* MovieDetailVC.swift in Sources */,
+				BFAB4B062BF991690062B6A7 /* UserDefaultManager.swift in Sources */,
 				BF49A30F2AF43D2C00F3B718 /* IdentifiableProtocol.swift in Sources */,
 				BF49A2EF2AF3FB3700F3B718 /* BaseViewModal.swift in Sources */,
 			);
