@@ -39,7 +39,7 @@ struct MediaURL { //PayFastServer Image
     static let environment = Domains.dev
     
     private struct Domains {
-        static let dev = "https://image.tmdb.org/t/p/w300"
+        static let dev = "https://image.tmdb.org/t/p/w500"
         static let stag = ""
         static let qa = ""
         static let production = ""

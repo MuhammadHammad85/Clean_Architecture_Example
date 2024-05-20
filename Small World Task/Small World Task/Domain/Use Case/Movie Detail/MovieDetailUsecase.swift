@@ -25,8 +25,9 @@ class MovieDetailUseCase: MovieDetailUseCaseProtocol {
     
     func execute(with id:Int, param: MovieDetailRequest, completion: @escaping CBUserCaseMovieDetail) {
         
-        repo.getMovieDetail(with: id, param: param) {
+        repo.getMovieDetail(with: id, param: param) { [ weak self ]
             movieDetail, message in
+            guard let _ = self else { return }
             if let movieDetail = movieDetail {
                 completion(movieDetail, nil)
             }else{

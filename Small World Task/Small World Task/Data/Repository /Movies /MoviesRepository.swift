@@ -33,8 +33,9 @@ class MoviesRepository: MoviesListRepoProtocol, MovieDetailRepoProtocol {
             method: .get,
             parameters: param,
             expectedResponse: MovieListResponse.self
-            ,completion: {
+            ,completion: { [weak self]
                 (response, error) in
+                guard let _ = self else { return }
                 if let response = response {
                     completion(response, nil)
                 }else {
@@ -51,8 +52,9 @@ class MoviesRepository: MoviesListRepoProtocol, MovieDetailRepoProtocol {
             method: .get,
             parameters: param,
             expectedResponse: MovieDetailResponse.self
-            ,completion: {
+            ,completion: { [weak self]
                 (response, error) in
+                guard let _ = self else { return }
                 if let response = response {
                     completion(response, nil)
                 }else {

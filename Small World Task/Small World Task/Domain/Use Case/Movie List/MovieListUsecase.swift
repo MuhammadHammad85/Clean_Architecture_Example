@@ -24,9 +24,9 @@ class MovieListUseCase: MovieListUseCaseProtocol {
     }
     
     func execute(param: MovieListRequest, completion: @escaping CBUserCaseMovieList) {
-        repo.getMovies(param: param) {
+        repo.getMovies(param: param) { [weak self]
             response, message in
-            
+            guard let _ = self else { return }
             guard let response = response, let movies = response.result, let totalPages = response.totalPages else {
                 completion(nil, nil, message)
                 return

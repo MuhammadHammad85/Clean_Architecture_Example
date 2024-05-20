@@ -29,7 +29,7 @@ class NetworkManager: NetworkManagerProtocol {
         if method == .post {
             encoder = JSONParameterEncoder.default
         }
-      
+        print("Request URL: \(urlPath)")
         AF.request(urlPath, method: method, parameters: parameters, encoder: encoder, headers: nil).responseDecodable(of: expectedResponse.self) { response in
            
             guard let code = response.response?.statusCode else {
